@@ -1,35 +1,40 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Question, Answer
-from .forms import QuestionForm, AnswerForm
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Question
+from .forms import QuestionForm
 
 def question_list(request):
     questions = Question.objects.all()
-    return render(request, 'qa/question_list.html', {'questions': questions})
+    return render(request, 'maths_app/question_list.html')
 
-def question_detail(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    answers = question.answers.all()
-    return render(request, 'qa/question_detail.html', {'question': question, 'answers': answers})
+def get_results(request):
+    pass
 
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('question_list')
+            return redirect('question_list') 
     else:
         form = QuestionForm()
-    return render(request, 'qa/question_form.html', {'form': form})
+    return render(request, 'maths_app/question_create.html', {'form': form})
 
-def answer_create(request, pk):
-    question = get_object_or_404(Question, pk=pk)
+
+
+@csrf_exempt
+def verify_answer(request):
     if request.method == 'POST':
-        form = AnswerForm(request.POST)
-        if form.is_valid():
-            answer = form.save(commit=False)
-            answer.question = question
-            answer.save()
-            return redirect('question_detail', pk=pk)
-    else:
-        form = AnswerForm()
-    return render(request, 'qa/answer_form.html', {'form': form})
+        data = json.loads(request.body)
+        answer = data.get('answer')
+
+        # Perform the answer verification logic here
+        correct_answer = Question.objects.filter(answer=answer).exists()
+
+        if correct_answer:
+            # Save the result to the database if needed
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

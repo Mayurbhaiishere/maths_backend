@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>ADD Question </h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" placeholder="Enter questions" id="username" name="questions" required>
+        <input type="text" placeholder="Enter answer" id="username" name="answer" required>
+        <button type="submit">next</button>
+    </form>
+</div>
+{% endblock %}

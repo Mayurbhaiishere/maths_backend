@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" href="{% static 'home.css' %}">
+<style>#answer {
+    display: block;
+    height: auto;
+    padding: 1vw;
+    margin: 10px 0px 14px 1px;
+    font-size: 1.4vw;
+    border: none;
+    background-color: rgb(220, 255, 255);
+    border-radius: 10px;
+  }
+  #answer:hover {
+    border: none;
+    background-color: rgb(164, 255, 255);
+  }</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Question :</h2>
+    <form>
+        {% csrf_token %}
+        <div class=""></div>
+
+       
+        <input type="text" placeholder="Enter answer" id="answer" required>
+        <button type="submit">Done</button>
+    </form>
+</div>
+
+<script src="{% static script.js %}"></script>
+{% endblock %}
+
