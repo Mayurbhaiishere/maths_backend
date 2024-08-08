@@ -2,22 +2,66 @@
 {% load static %}
 
 {% block title %}
+<!-- <link rel="stylesheet" href="{% static 'home.css' %}"> -->
 <style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #b3d9ff;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding-left: 6vw;
+  padding-right: 6vw;
+  margin: 17vw auto 0vw 32vw;
+}
+.container h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.container button {
+  background-color: #ff5d00;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.container button:hover {
+  background-color: #c94a00;
+}
+.character {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  width: 150px;
+  height: auto;
+}
 #answer {
-    display: block;
-    height: auto;
-    padding: 1vw;
-    margin: 10px 0px 14px 1px;
-    font-size: 1.4vw;
-    border: none;
-    background-color: rgb(220, 255, 255);
-    border-radius: 10px;
+  display: block;
+  height: auto;
+  padding: 1vw;
+  margin: 10px 0px 14px 1px;
+  font-size: 1.4vw;
+  border: none;
+  background-color: rgb(220, 255, 255);
+  border-radius: 10px;
 }
 #answer:hover {
-    border: none;
-    background-color: rgb(164, 255, 255);
+  border: none;
+  background-color: rgb(164, 255, 255);
 }
-.data{
+
+#data{
   height: 3vw;
   width: 10vw;
   margin: auto;
@@ -28,15 +72,47 @@
 {% block content %}
 <div class="container">
     <h2 id="questionss">Questions:</h2>
-    <div id="data" >{{ questionss }}</div>
-    <form>
+    <form id="answerForm">
         {% csrf_token %}
+        <div id="data" data-values='{{ questions_json|escapejs }}'></div>
+        <div id="questionsDisplay"></div>
         <input type="text" placeholder="Enter answer" id="answer" required>
         <button type="submit">Done</button>
     </form>
-    <div class="result"></div>
+    <div id="result"></div>
 </div>
 
-<script src="{% static 'script.js' %}"></script>
-{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   
+    const dataElement = document.getElementById('data');
+    const dataValues = JSON.parse(dataElement.getAttribute('data-values'));
 
+   
+    let questionsText = '';
+    dataValues.forEach((item) => {
+        questionsText += item.fields.question + '<br>';
+    });
+
+    
+    document.getElementById('questionsDisplay').innerHTML = questionsText;
+
+    
+    document.getElementById('answerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const userAnswer = document.getElementById('answer').value;
+        let result = 0;
+
+        dataValues.forEach((item) => {
+            if (userAnswer.trim().toLowerCase() === item.fields.answer.trim().toLowerCase()) {
+                result = 1;
+                console.log(result);
+            }
+        });
+
+        
+        document.getElementById('result').innerText = result;
+    });
+});
+</script>
+{% endblock %}
