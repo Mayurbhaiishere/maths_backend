@@ -1,7 +1,12 @@
 from django import forms
-from .models import Question
+from .models import Questions,GetResult
 
-class QuestionForm(forms.ModelForm):
+class QuestionForms(forms.ModelForm):
     class Meta:
-        model = Question
+        model = Questions
         fields = ['questions', 'answer']  
+
+class ResultForms(forms.ModelForm):
+    class Meta:
+        model = GetResult
+        fields = ['questions','user_answer']

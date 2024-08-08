@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block title %}
-<link rel="stylesheet" href="{% static 'home.css' %}">
-<style>#answer {
+<style>
+#answer {
     display: block;
     height: auto;
     padding: 1vw;
@@ -12,26 +12,31 @@
     border: none;
     background-color: rgb(220, 255, 255);
     border-radius: 10px;
-  }
-  #answer:hover {
+}
+#answer:hover {
     border: none;
     background-color: rgb(164, 255, 255);
-  }</style>
+}
+.data{
+  height: 3vw;
+  width: 10vw;
+  margin: auto;
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2>Question :</h2>
+    <h2 id="questionss">Questions:</h2>
+    <div id="data" >{{ questionss }}</div>
     <form>
         {% csrf_token %}
-        <div class=""></div>
-
-       
         <input type="text" placeholder="Enter answer" id="answer" required>
         <button type="submit">Done</button>
     </form>
+    <div class="result"></div>
 </div>
 
-<script src="{% static script.js %}"></script>
+<script src="{% static 'script.js' %}"></script>
 {% endblock %}
 

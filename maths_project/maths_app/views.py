@@ -1,40 +1,31 @@
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Question
-from .forms import QuestionForm
+from django.shortcuts import render, redirect
+from .models import Questions,GetResult
+from .forms import QuestionForms,ResultForms
 
 def question_list(request):
-    questions = Question.objects.all()
-    return render(request, 'maths_app/question_list.html')
+    questions = list(Questions.objects.values())
+    # if request.method == 'POST':
+    #     questions = QuestionForms(request.POST)
+    #     if answer.is_valid():
+    #         answer.save()
+    #     return redirect('question_list')
+    # else:
+    #     answer = QuestionForms()
+    #     return render(request, self.template_name, {'questions': questions})
+    return render(request,'maths_app/question_list.html',{'questions': questions})
 
-def get_results(request):
-    pass
+
+def put_results(request):
+    answer = list(GetResult.objects.values().order_by('-created_at'))
+    return render(request, 'maths_app/question_list.html', {'answer': answer})
 
 def question_create(request):
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
+        form = QuestionForms(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('question_list') 
+            return redirect('question_create') 
     else:
-        form = QuestionForm()
+        form = QuestionForms()
     return render(request, 'maths_app/question_create.html', {'form': form})
 
-
-
-@csrf_exempt
-def verify_answer(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        answer = data.get('answer')
-
-        # Perform the answer verification logic here
-        correct_answer = Question.objects.filter(answer=answer).exists()
-
-        if correct_answer:
-            # Save the result to the database if needed
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
